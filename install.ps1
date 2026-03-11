@@ -85,8 +85,8 @@ function Get-Spicetify {
     }
     else {
       Write-Host -Object 'Fetching the latest spicetify version...' -NoNewline
-      # MODIFIED: Points to GamerNation12/cli instead of spicetify/cli
-      $latestRelease = Invoke-RestMethod -Uri 'https://api.github.com/repos/GamerNation12/cli/releases/latest'
+      # Restored to official Spicetify API to find the actual files
+      $latestRelease = Invoke-RestMethod -Uri 'https://api.github.com/repos/spicetify/cli/releases/latest'
       $targetVersion = $latestRelease.tag_name -replace 'v', ''
       Write-Success
     }
@@ -95,10 +95,10 @@ function Get-Spicetify {
   process {
     Write-Host -Object "Downloading spicetify v$targetVersion..." -NoNewline
     $Parameters = @{
-      # MODIFIED: Points to GamerNation12/cli instead of spicetify/cli
-      Uri            = "https://github.com/GamerNation12/cli/releases/download/v$targetVersion/spicetify-$targetVersion-windows-$architecture.zip"
+      # Restored to official Spicetify download link
+      Uri             = "https://github.com/spicetify/cli/releases/download/v$targetVersion/spicetify-$targetVersion-windows-$architecture.zip"
       UseBasicParsing = $true
-      OutFile        = $archivePath
+      OutFile         = $archivePath
     }
     Invoke-WebRequest @Parameters
     Write-Success
@@ -206,7 +206,7 @@ if ($choice -eq 1) {
 else {
   Write-Host -Object 'Starting the spicetify Marketplace installation script..'
   $Parameters = @{
-    # MODIFIED: Points to GamerNation12/marketplace instead of spicetify/spicetify-marketplace
+    # Keeps your custom GamerNation12 Marketplace link
     Uri             = 'https://raw.githubusercontent.com/GamerNation12/marketplace/main/resources/install.ps1'
     UseBasicParsing = $true
   }
