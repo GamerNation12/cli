@@ -213,4 +213,15 @@ else {
   Invoke-WebRequest @Parameters | Invoke-Expression
 }
 #endregion Marketplace
+
+Write-Host -Object "`nRestarting Spotify..." -ForegroundColor 'Cyan'
+Stop-Process -Name Spotify -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 2
+
+$spotifyPath = "$env:APPDATA\Spotify\Spotify.exe"
+if (Test-Path $spotifyPath) {
+    Start-Process -FilePath $spotifyPath
+} else {
+    Write-Host -Object "Could not automatically launch Spotify. Please open it manually." -ForegroundColor 'Yellow'
+}
 #endregion Main
