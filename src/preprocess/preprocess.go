@@ -104,6 +104,13 @@ func Start(version string, spotifyBasePath string, extractedAppsPath string, fla
 		readLocalCssMap(&cssTranslationMap)
 	}
 
+	cssMapPairs := make([]string, 0, len(cssTranslationMap)*2)
+	for k, v := range cssTranslationMap {
+		cssMapPairs = append(cssMapPairs, k, v)
+	}
+	cssMapJSReplacer := strings.NewReplacer(cssMapPairs...)
+	cssMapJSStringRe := regexp.MustCompile(`"[^"]*"|'[^']*'|` + "`[^`]*`")
+
 	verParts := strings.Split(flags.SpotifyVer, ".")
 	spotifyMajor, spotifyMinor, spotifyPatch := 0, 0, 0
 	if len(verParts) > 0 {
@@ -259,11 +266,12 @@ func Start(version string, spotifyBasePath string, extractedAppsPath string, fla
 					})
 				}
 
-				for k, v := range cssTranslationMap {
-					utils.Replace(&content, k, func(submatches ...string) string {
-						return v
-					})
-				}
+				content = cssMapJSStringRe.ReplaceAllStringFunc(content, func(match string) string {
+					quote := match[0:1]
+					innerString := match[1 : len(match)-1]
+					replacedString := cssMapJSReplacer.Replace(innerString)
+					return quote + replacedString + quote
+				})
 				content = colorVariableReplaceForJS(content)
 
 				return content
